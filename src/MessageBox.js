@@ -62,6 +62,7 @@ export function MessageBox({ onMessageAdded }) {
   return (
     <Container data-testid="MessageBox">
       <Editor
+        autoFocus={true}
         placeholder="Enter comment here..."
         value={message}
         onChange={onEditorChange}

@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import { MessageBox } from "./MessageBox";
 import { PostEditor } from "./PostEditor";
 import { Markdown } from "./Markdown";
+import { MessageHistory } from "./MessageHistory";
 
 const Container = styled.div`
   display: flex;
@@ -24,10 +25,6 @@ const PostTitle = styled.div`
   color: #1c1c1c;
 `;
 
-const Content = styled.div`
-  grid-area: content;
-`;
-
 const Msg = styled.div`
   padding: 20px;
   font-size: 18px;
@@ -41,21 +38,6 @@ const PostContent = styled.div`
   margin-bottom: 20px;
   padding-bottom: 10px;
 `;
-
-const Message = styled.div`
-  margin-bottom: 10px;
-`;
-
-const MessageOwner = styled.span`
-  font-weight: bold;
-`;
-const MessageTimestamp = styled.span`
-  margin-left: 5px;
-  color: gray;
-  font-size: 12px;
-`;
-
-const MessageContent = styled.div``;
 
 const BackButton = styled.div`
   position: absolute;
@@ -86,14 +68,33 @@ const EditButton = styled.div`
   right: 10px;
 `;
 
+const BottomAnchor = styled.div`
+  height: 100px;
+`;
+
 export function PostPage() {
+  const [oldestMessagesLimit, setOldestMessagesLimit] = React.useState(30);
+  const bottomAnchor = React.useRef();
   const history = useHistory();
   const { postId } = useParams();
   const [showEditor, setShowEditor] = React.useState(false);
-  const post = useQuery(getPostQuery(), { postId });
+  const postQuery = useQuery(GET_POST_QUERY, { postId });
+  const messagesQuery = useQuery(GET_MESSAGES_QUERY, {
+    postId,
+    oldestMessagesLimit
+  });
+
+  const loadMoreMessages = () => {
+    const newLimit = oldestMessagesLimit + oldestMessagesLimit;
+    messagesQuery.refetch({
+      postId,
+      oldestMessagesLimit: newLimit
+    });
+    setOldestMessagesLimit(newLimit);
+  };
 
   return (
-    <Container data-testid="Post" show={!post.loading}>
+    <Container data-testid="Post" show={!messagesQuery.loading}>
       <Body>
         {!showEditor && (
           <BackButton>
@@ -107,43 +108,43 @@ export function PostPage() {
             </Button>
           </BackButton>
         )}
-        {!post.loading && post.error && (
+        {!postQuery.loading && postQuery.error && (
           <Msg>
-            Error: <b>{getPostErrorMessage(post)}</b>
+            Error: <b>{getPostErrorMessage(postQuery)}</b>
           </Msg>
         )}
-        <PostTitle>{!post.loading && post.data.getPost.title}</PostTitle>
+        <PostTitle>{!postQuery.loading && postQuery.data.post.title}</PostTitle>
         <PostContent>
-          {!post.loading && <Markdown content={post.data.getPost.content} />}
+          {!postQuery.loading && (
+            <Markdown content={postQuery.data.post.content} />
+          )}
         </PostContent>
         <EditButton>
           <Button onClick={() => setShowEditor(true)}>Edit</Button>
         </EditButton>
-        <Content>
-          {!post.loading &&
-            !post.error &&
-            post.data.getPost.messages.items.map(m => {
-              return (
-                <Message key={m.id}>
-                  <MessageOwner>{m.owner}</MessageOwner>
-                  <MessageTimestamp>
-                    {new Date(m.createdAt).toLocaleString()}
-                  </MessageTimestamp>
-                  <MessageContent>
-                    <Markdown content={m.content} />
-                  </MessageContent>
-                </Message>
-              );
-            })}
-        </Content>
-        <MessageBox onMessageAdded={post.refetch} />
+        <MessageHistory
+          messagesQuery={messagesQuery}
+          onMoreMessagesClicked={loadMoreMessages}
+        />
+        <MessageBox
+          onMessageAdded={() => {
+            messagesQuery.refetch({
+              postId,
+              oldestMessagesLimit,
+              onCompleteQuery() {
+                bottomAnchor.current.scrollIntoView();
+              }
+            });
+          }}
+        />
+        <BottomAnchor ref={bottomAnchor} />
       </Body>
-      {showEditor && !post.loading && (
+      {showEditor && !postQuery.loading && (
         <Sidebar>
           <PostEditor
-            post={post.data.getPost}
+            post={postQuery.data.post}
             onPostSaved={() => {
-              post.refetch();
+              postQuery.refetch();
               setShowEditor(false);
             }}
             onCancelled={() => {
@@ -156,17 +157,27 @@ export function PostPage() {
   );
 }
 
-function getPostQuery(messageLimit = 10, messageNextToken = undefined) {
-  return `query getPost($postId:ID!) {
-    getPost(id:$postId) {      
-        id
-        title
-        owner
-        content
-        participants
-        createdAt
-        messages {
-          items {
+const GET_POST_QUERY = `query getMessages($postId:ID!) {
+  post: getPost(id:$postId) {      
+      id
+      title
+      owner
+      content
+      participants
+      createdAt
+  }
+}`;
+
+/*
+  For pagination to work, the limit for the newestMessages must always be 
+  one higher than the limit for oldestMessages. See docs for 
+  parsePostQueryForMessages.js for more info about pagination.
+*/
+const GET_MESSAGES_QUERY = `query getMessages($postId:ID!, $oldestMessagesLimit:Int!) {
+  messages: getPost(id:$postId) {      
+      id    
+      oldestMessages: messages(limit:$oldestMessagesLimit, sortDirection:ASC) {
+        items {
           id          
           type
           owner
@@ -177,14 +188,17 @@ function getPostQuery(messageLimit = 10, messageNextToken = undefined) {
           }
         }
       }
+      newestMessages: messages(limit:31, sortDirection:DESC) {
+        items {
+          id          
+          type
+          owner
+          createdAt
+          content
+          post {
+            id
+          }
+        }
+      }        
     }
   }`;
-}
-
-/*
-messages(
-          limit: ${messageLimit},
-          sortDirection: ASC,
-          ${messageNextToken ? `nextToken:"${messageNextToken}"` : ``}
-        )
-        */

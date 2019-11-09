@@ -10,7 +10,9 @@ export const useQuery = (query, variables = {}) => {
   const fetchQuery = async (query, variables) => {
     try {
       const { data } = await API.graphql(graphqlOperation(query, variables));
-      console.log("QUERY:", data);
+      if (variables.onCompleteQuery) {
+        variables.onCompleteQuery();
+      }
       setData(data);
     } catch (error) {
       console.error(error);
@@ -20,8 +22,8 @@ export const useQuery = (query, variables = {}) => {
     }
   };
 
-  const refetch = () => {
-    fetchQuery(query, variables);
+  const refetch = (vars = variables) => {
+    fetchQuery(query, vars);
   };
 
   useDeepCompareEffect(() => {
