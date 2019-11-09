@@ -5,8 +5,8 @@ import { useHistory, useParams } from "react-router-dom";
 import { getPostErrorMessage } from "./error-utils";
 import Button from "react-bootstrap/Button";
 import { MessageBox } from "./MessageBox";
-import ReactMarkdown from "react-markdown";
 import { PostEditor } from "./PostEditor";
+import { Markdown } from "./Markdown";
 
 const Container = styled.div`
   display: flex;
@@ -114,9 +114,7 @@ export function PostPage() {
         )}
         <PostTitle>{!post.loading && post.data.getPost.title}</PostTitle>
         <PostContent>
-          {!post.loading && (
-            <ReactMarkdown source={post.data.getPost.content} />
-          )}
+          {!post.loading && <Markdown content={post.data.getPost.content} />}
         </PostContent>
         <EditButton>
           <Button onClick={() => setShowEditor(true)}>Edit</Button>
@@ -132,7 +130,7 @@ export function PostPage() {
                     {new Date(m.createdAt).toLocaleString()}
                   </MessageTimestamp>
                   <MessageContent>
-                    <ReactMarkdown source={m.content} />
+                    <Markdown content={m.content} />
                   </MessageContent>
                 </Message>
               );

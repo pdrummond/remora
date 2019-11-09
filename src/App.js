@@ -2,6 +2,7 @@ import React from "react";
 import Amplify from "aws-amplify";
 import awsconfig from "./aws-exports";
 import { withAuthenticator } from "aws-amplify-react";
+import "./MarkdownContent.css";
 import {
   BrowserRouter as Router,
   Route,

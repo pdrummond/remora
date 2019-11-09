@@ -1,0 +1,13 @@
+blockquote {
+  color: rgb(103, 113, 122);
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-left: 4px solid rgb(235, 236, 237);
+  padding: 4px 12px 4px 16px;
+}
+
+pre {
+  background-color: #404040;
+  color: white;
+  padding: 10px;
+}
