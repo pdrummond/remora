@@ -1,0 +1,35 @@
+type Post
+  @model
+  @auth(
+    rules: [
+      { allow: owner }
+      { allow: owner, ownerField: "participants", operations: [read, update] }
+    ]
+  ) {
+  id: ID!
+  type: String!
+  title: String!
+  content: String!
+  messages: [Message] @connection(name: "PostMessages", sortField: "createdAt")
+  createdAt: String
+  updatedAt: String
+  owner: String
+  participants: [String]
+}
+
+# Messages can only be created, updated or deleted by their owner.
+# Messages can be read by anyone but because the queries is NULL, it's only
+# possible to get messages from the post query meaning only participants of the
+# post can read them.
+
+type Message
+  @model(queries: null)
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }]) {
+  id: ID!
+  type: String!
+  content: String!
+  post: Post @connection(name: "PostMessages")
+  createdAt: String
+  updatedAt: String
+  owner: String
+}

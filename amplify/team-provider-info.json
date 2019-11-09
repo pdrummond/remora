@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-remora-dev-203123-authRole",
+            "UnauthRoleArn": "arn:aws:iam::203419813056:role/amplify-remora-dev-203123-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::203419813056:role/amplify-remora-dev-203123-authRole",
+            "Region": "eu-west-1",
+            "DeploymentBucketName": "amplify-remora-dev-203123-deployment",
+            "UnauthRoleName": "amplify-remora-dev-203123-unauthRole",
+            "StackName": "amplify-remora-dev-203123",
+            "StackId": "arn:aws:cloudformation:eu-west-1:203419813056:stack/amplify-remora-dev-203123/3bc8b130-000b-11ea-9c6c-029e8e947a9c"
+        },
+        "categories": {
+            "auth": {
+                "remora78e1ab8e": {}
+            }
+        }
+    }
+}
