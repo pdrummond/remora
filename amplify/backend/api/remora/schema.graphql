@@ -1,5 +1,5 @@
 type Post
-  @model
+  @model(subscriptions: null)
   @auth(
     rules: [
       { allow: owner }
@@ -23,7 +23,7 @@ type Post
 # post can read them.
 
 type Message
-  @model(queries: null)
+  @model(queries: null, subscriptions: null)
   @auth(rules: [{ allow: owner, operations: [create, update, delete] }]) {
   id: ID!
   type: String!
@@ -32,4 +32,10 @@ type Message
   createdAt: String
   updatedAt: String
   owner: String
+  messagePostId: ID!
+}
+
+type Subscription {
+  onCreateMessageInPost(messagePostId: ID!): Message
+    @aws_subscribe(mutations: ["createMessage"])
 }

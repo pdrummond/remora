@@ -8,6 +8,7 @@ const Container = styled.div`
 `;
 
 const LoadMoreDivider = styled.div`
+  margin-top: 40px;
   position: relative;
   height: 80px;
 `;
@@ -20,7 +21,7 @@ const DividerLine = styled.div`
 `;
 const DividerText = styled.div`
   border: 1px solid lightgray;
-  background-color: white;
+  background-color: whitesmoke;
   padding: 10px;
   z-index: 1;
   position: absolute;

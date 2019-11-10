@@ -3,7 +3,13 @@ import styled from "styled-components";
 import { Markdown } from "./Markdown";
 
 const Message = styled.div`
-  margin-bottom: 10px;
+  padding: 10px;
+  margin-top: 30px;
+  border: 1px solid #ebe9e9;
+
+  &:last-child {
+    margin-bottom: 30px;
+  }
 `;
 
 const MessageOwner = styled.span`

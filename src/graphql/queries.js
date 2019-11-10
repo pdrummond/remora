@@ -15,6 +15,7 @@ export const getPost = `query GetPost($id: ID!) {
         createdAt
         updatedAt
         owner
+        messagePostId
       }
       nextToken
     }

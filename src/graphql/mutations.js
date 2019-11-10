@@ -15,6 +15,7 @@ export const createPost = `mutation CreatePost($input: CreatePostInput!) {
         createdAt
         updatedAt
         owner
+        messagePostId
       }
       nextToken
     }
@@ -39,6 +40,7 @@ export const updatePost = `mutation UpdatePost($input: UpdatePostInput!) {
         createdAt
         updatedAt
         owner
+        messagePostId
       }
       nextToken
     }
@@ -63,6 +65,7 @@ export const deletePost = `mutation DeletePost($input: DeletePostInput!) {
         createdAt
         updatedAt
         owner
+        messagePostId
       }
       nextToken
     }
@@ -94,6 +97,7 @@ export const createMessage = `mutation CreateMessage($input: CreateMessageInput!
     createdAt
     updatedAt
     owner
+    messagePostId
   }
 }
 `;
@@ -118,6 +122,7 @@ export const updateMessage = `mutation UpdateMessage($input: UpdateMessageInput!
     createdAt
     updatedAt
     owner
+    messagePostId
   }
 }
 `;
@@ -142,6 +147,7 @@ export const deleteMessage = `mutation DeleteMessage($input: DeleteMessageInput!
     createdAt
     updatedAt
     owner
+    messagePostId
   }
 }
 `;

@@ -18,7 +18,6 @@ export function parsePostQueryForMessages(oldestMessages, newestMessages) {
 
   //Remove any overlapping entries from newest
   let difference = newest.filter(x => !oldest.find(y => y.id === x.id));
-  console.log("DIFFERENCE:", difference);
 
   if (isMoreMessages === true && difference.length === 0) {
     isMoreMessages = false;

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Auth } from "aws-amplify";
 import { NavLink } from "react-router-dom";
-import { useCurrentUser } from "./useCurrentUser";
+import { useAppContext } from "./useAppContext";
 
 const Container = styled.div`
   grid-area: sidebar;
@@ -38,7 +38,7 @@ const ListItem = styled.div`
 `;
 
 export function Sidebar() {
-  const { currentUser } = useCurrentUser();
+  const { appState } = useAppContext();
 
   const signOut = async () => {
     await Auth.signOut();
@@ -52,7 +52,7 @@ export function Sidebar() {
         </ListItem>
       </List>
       <UserFooter data-testid="UserFooter" onClick={signOut}>
-        {currentUser.username}
+        {appState.currentUser.username}
       </UserFooter>
     </Container>
   );

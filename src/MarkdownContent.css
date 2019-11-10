@@ -11,3 +11,7 @@ pre {
   color: white;
   padding: 10px;
 }
+
+p:last-child {
+  margin-bottom: 0px;
+}

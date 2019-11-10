@@ -45,13 +45,10 @@ export function MessageBox({ onMessageAdded }) {
   };
 
   const addMessage = async () => {
-    console.log("CONTENT:", message);
-    console.log("postId:", postId);
     const result = await mutation(NEW_MESSAGE_MUTATION, {
       content: message,
       postId
     });
-    console.log("NEW MESSAGE RESULT:", result);
     const messageId = result.data.createMessage.id;
     if (onMessageAdded) {
       onMessageAdded(messageId);
@@ -94,8 +91,6 @@ const NEW_MESSAGE_MUTATION = `mutation createMessage($content:String!, $postId:I
       owner
       content
       createdAt
-      post {
-        id
-      }
+      messagePostId      
     }
   }`;

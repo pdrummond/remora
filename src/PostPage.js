@@ -8,6 +8,7 @@ import { MessageBox } from "./MessageBox";
 import { PostEditor } from "./PostEditor";
 import { Markdown } from "./Markdown";
 import { MessageHistory } from "./MessageHistory";
+import { NewMessagesBanner } from "./NewMessagesBanner";
 
 const Container = styled.div`
   display: flex;
@@ -34,7 +35,6 @@ const Msg = styled.div`
 const PostContent = styled.div`
   font-size: 18px;
   margin-top: 10px;
-  border-bottom: 1px solid whitesmoke;
   margin-bottom: 20px;
   padding-bottom: 10px;
 `;
@@ -45,8 +45,14 @@ const BackButton = styled.div`
   left: 10px;
 `;
 
+const JumpToBottomButton = styled.div`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+`;
+
 const Body = styled.div`
-  width: 70%;
+  width: 50%;
   margin: 10px auto;
   padding: 20px;
 `;
@@ -97,16 +103,28 @@ export function PostPage() {
     <Container data-testid="Post" show={!messagesQuery.loading}>
       <Body>
         {!showEditor && (
-          <BackButton>
-            <Button
-              variant="link"
-              onClick={() => {
-                history.push("/");
-              }}
-            >
-              Back
-            </Button>
-          </BackButton>
+          <>
+            <BackButton>
+              <Button
+                variant="link"
+                onClick={() => {
+                  history.push("/");
+                }}
+              >
+                Back
+              </Button>
+            </BackButton>
+            <JumpToBottomButton>
+              <Button
+                variant="link"
+                onClick={() => {
+                  bottomAnchor.current.scrollIntoView();
+                }}
+              >
+                Jump to bottom
+              </Button>
+            </JumpToBottomButton>
+          </>
         )}
         {!postQuery.loading && postQuery.error && (
           <Msg>
@@ -125,6 +143,19 @@ export function PostPage() {
         <MessageHistory
           messagesQuery={messagesQuery}
           onMoreMessagesClicked={loadMoreMessages}
+        />
+        <NewMessagesBanner
+          postId={postId}
+          onBannerClicked={() => {
+            messagesQuery.refetch({
+              postId,
+              oldestMessagesLimit: 30,
+              onCompleteQuery() {
+                bottomAnchor.current.scrollIntoView();
+              }
+            });
+            setOldestMessagesLimit(30);
+          }}
         />
         <MessageBox
           onMessageAdded={() => {

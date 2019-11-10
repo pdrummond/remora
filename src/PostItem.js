@@ -25,7 +25,6 @@ const Detail = styled.div`
 `;
 
 export function PostItem({ post }) {
-  console.log("POST:", post);
   return (
     <Container data-testid="PostItem">
       <Title>
